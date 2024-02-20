@@ -5,7 +5,7 @@ class ProductsController < ApplicationController
   end
 
   def show
-    @product = Product.find_by(id: params[:id])
+    @product = Product.find(params[:id])
     render json: @product
   end
   def new
@@ -34,9 +34,12 @@ class ProductsController < ApplicationController
   end
 
   def destroy
-    @product = Product.find_by(id: params[:id])
-    @product.destroy
-    head :no_content
+    @product = Product.find(params[:id])
+    if @product.destroy
+      render status: :ok
+    else
+      render json: {error: 'Error deleting product'}
+    end
   end
 
   private
