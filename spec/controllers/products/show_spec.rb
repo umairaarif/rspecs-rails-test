@@ -3,7 +3,10 @@ require 'rails_helper'
 RSpec.describe ProductsController, type: :controller do
   describe 'GET #show' do
     let(:product) { Product.create(name: 'Ring', description: 'Golden ring') }
-    
+    let!(:user) { User.create(email: 'umair@gmail.com',password: '123123') }
+      before do
+          sign_in user 
+      end
     context 'with valid product id' do
       it 'returns the product' do
         get :show, params: { id: product.id }

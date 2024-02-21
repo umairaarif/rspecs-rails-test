@@ -2,7 +2,10 @@ require 'rails_helper'
 
 RSpec.describe ProductsController, type: :controller do
   describe "POST #create" do
-
+  let!(:user) { User.create(email: 'umair@gmail.com',password: '123123') }
+  before do
+    sign_in user 
+  end
     scenario "valid product attributes" do
       post :create, params: {
         product: {
@@ -10,7 +13,6 @@ RSpec.describe ProductsController, type: :controller do
           description: 'golden ring'
         }
       }
-    
       expect(response.status).to eq(201)
       json = JSON.parse(response.body).deep_symbolize_keys
       expect(json[:name]).to eq('ring')
