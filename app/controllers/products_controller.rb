@@ -16,10 +16,11 @@ class ProductsController < ApplicationController
 
   def create
     @product = current_user.products.new(product_params)
+    authorize! :create ,@product
     if @product.save
       render json: @product, status: :created
     else 
-      render json: @product.errors, status: 401
+      render json: @product.errors, status: 302
     end
   end
 
@@ -40,7 +41,7 @@ class ProductsController < ApplicationController
     if @product.destroy
       render status: :no_content
     else
-      render json: {error: 'Error deleting product'}
+      render json: {error: 'Error deleting product'},status: 302
     end
   end
 

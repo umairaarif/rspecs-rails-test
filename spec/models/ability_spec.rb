@@ -5,9 +5,9 @@ RSpec.describe Ability, type: :model do
   describe "abilities" do
     subject(:ability) { Ability.new(user) }
     context "when user is present" do
-      let!(:user) { User.new }
-      let!(:own_product) {user.products.new}
-      let!(:other_product) { Product.new }
+      let(:user) { User.new }
+      let(:own_product) {user.products.new}
+      let(:other_product) { Product.new }
       it "can manage own products" do
         expect(ability).to be_able_to(:manage,own_product)
       end
@@ -16,8 +16,8 @@ RSpec.describe Ability, type: :model do
       end
     end
     context "when user is nil" do
-      let!(:user) { nil}
-      let!(:product) { Product.new}
+      let(:user) { nil}
+      let(:product) { Product.new}
       it "cannot manage any product" do
         expect(ability).not_to be_able_to(:manage,product)
       end

@@ -1,15 +1,16 @@
 require 'rails_helper'
 RSpec.describe ProductsController, type: :controller do
-  let(:user) { User.create(email:'umair@gmail.com',password:'123123') }
-  let(:other_user) { User.create(email:'ali@gmail.com',password:'123123') }
-  let(:product) {  user.products.create(name:'smart phone',description:'vivo smart phone')  }
-  let(:other_product) {  other_user.products.create(name:'laptop',description:'lenovo thinkpad')  }
+  let(:admin) { User.create(email:'umair@gmail.com',password:'123123',user_type: 'admin') }
+  let(:employee) { User.create(email:'ali@gmail.com',password:'123123',user_type: 'employee') }
+  let(:product) {  admin.products.create(name:'smart phone',description:'vivo smart phone')  }
+  let(:other_product) {  employee.products.create(name:'laptop',description:'lenovo thinkpad')  }
 
   describe "#update" do
     context "when user tries to update their own product" do
       before do
-        sign_in user 
-        allow(controller).to receive(:current_user).and_return(user)
+        sign_in admin 
+        allow(controller).to receive(:current_user).and_return(admin)
+       
       end
 
       it "updates the product" do
@@ -21,8 +22,9 @@ RSpec.describe ProductsController, type: :controller do
 
     context "when user tries to update other user's product" do
       before do
-        sign_in user 
-        allow(controller).to receive(:current_user).and_return(user)
+        sign_in admin 
+        allow(controller).to receive(:current_user).and_return(admin)
+       
       end
 
       it "does not update the product" do

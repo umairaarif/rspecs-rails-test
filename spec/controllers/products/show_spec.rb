@@ -1,13 +1,14 @@
 require 'rails_helper'
 RSpec.describe ProductsController, type: :controller do
-  let(:user) { User.create(email:'umair@gmail.com',password:'123123') }
-  let(:product) { user.products.create(name:'laptop',description:'lenovo thinkpad') }
+  let(:admin) { User.create(email:'umair@gmail.com',password:'123123',user_type: 'admin') }
+  let(:product) { admin.products.create(name:'laptop',description:'lenovo thinkpad') }
 
   describe "#show" do
     context "when user is authorized to view the product" do
       before do
-        sign_in user
-        allow(controller).to receive(:current_user).and_return(user)
+        sign_in admin
+        allow(controller).to receive(:current_user).and_return(admin)
+       
       end
 
       it "returns the product" do

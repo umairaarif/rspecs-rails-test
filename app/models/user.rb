@@ -6,4 +6,6 @@ class User < ApplicationRecord
   # validates :email, presence: true
   # validates :password, presence: true
   has_many :products
+
+  enum :user_type ,{ admin: 0,employee: 1 }
 end
