@@ -1,8 +1,8 @@
 class ProductsController < ApplicationController
   before_action :authenticate_user!
-
+  load_and_authorize_resource
   def index
-    @products = Product.all
+    @products = Product.accessible_by(current_ability)
     render json: @products
   end
 
@@ -15,11 +15,11 @@ class ProductsController < ApplicationController
   end
 
   def create
-    @product = Product.create(product_params)
+    @product = current_user.products.new(product_params)
     if @product.save
       render json: @product, status: :created
     else 
-      render json: @product.errors, status: :unprocessable_entity
+      render json: @product.errors, status: 401
     end
   end
 
@@ -38,7 +38,7 @@ class ProductsController < ApplicationController
   def destroy
     @product = Product.find(params[:id])
     if @product.destroy
-      render status: :ok
+      render status: :no_content
     else
       render json: {error: 'Error deleting product'}
     end

@@ -5,6 +5,5 @@ Rails.application.routes.draw do
     registrations: 'users/registrations'
   }  
   resources :products
-  get 'health/index'
   root 'products#index'
 end

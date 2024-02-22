@@ -1,25 +1,53 @@
-require "rails_helper"
+require 'rails_helper'
 
 RSpec.describe ProductsController, type: :controller do
-    describe 'GET #index' do
+  describe "#index" do
+    context "when user can read own products" do
+      let(:user) { User.create(email:'umair@gmail.com',password:'123123') }
+      let!(:user_product) { user.products.create(name:'watch',description:'hand watch') }
+      let!(:other_product) { Product.new }
 
-        let!(:user) { User.create(email: 'umair@gmail.com',password: '123123') }
-        before do
-            sign_in user 
-        end
+      before do
+        sign_in user
+        ability = Ability.new(user)
+        allow(controller).to receive(:current_ability).and_return(ability)
+        get :index
+      end
 
-        before do
-            Product.create(name: "First name", description: "This is the first description")
-            Product.create(name: "Second name", description: "This is the second description")
-        end
+      it "returns only products that the user can read" do
+        expect(assigns(:products)).to include(user_product)
+        expect(assigns(:products)).not_to include(other_product)
+        expect(response).to have_http_status(:success)
+      end
 
-        scenario "Sends a get request to get all product" do
-                
-            get :index
-
-            expect(response.status).to eq(200)
-            json = JSON.parse(response.body)
-            expect(json.count).to eq(2)
-        end
     end
+
+    context "when user cannot read other products" do
+      let(:user1) { User.create(email:'ali@gmail.com',password:'123123') }
+      let(:user2) { User.create(email:'umair@gmail.com',password:'123123') }
+      let!(:user_product1) { user1.products.create(name:'watch',description:'hand watch') }
+      let!(:user_product2) { user2.products.create(name:'phone',description:'vivo mobile phone') }
+
+      before do
+        sign_in user1
+        ability1 = Ability.new(user1)
+        ability1.can :manage, Product,user: user1
+        allow(controller).to receive(:current_ability).and_return(ability1)
+        get :index
+      end
+       before do
+        sign_in user2
+        ability2 = Ability.new(user2)
+        ability2.can :manage, Product,user: user2
+        allow(controller).to receive(:current_ability).and_return(ability2)
+        get :index
+      end
+
+      it "returns an empty collection" do
+        expect(assigns(:products)).to include(user_product1)
+        expect(response).to have_http_status(:success)
+      end
+
+    end
+  end
 end
