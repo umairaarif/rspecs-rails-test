@@ -2,16 +2,16 @@ class ProductsController < ApplicationController
   before_action :authenticate_user!
   load_and_authorize_resource
   def index
-      @products = Product.accessible_by(current_ability)
+    @products = Product.accessible_by(current_ability)
     render json: @products
   end
 
   def show
-    @product = Product.find(params[:id])
+      @product = Product.find(params[:id])
     render json: @product
   end
   def new
-    @product = Product.new
+      @product = Product.new
   end
 
   def create
@@ -25,8 +25,7 @@ class ProductsController < ApplicationController
   end
 
   def edit
-    @product = Product.find(params[:id])
-    
+      @product = Product.find(params[:id])
   end
 
   def update
